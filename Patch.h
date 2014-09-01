@@ -60,7 +60,7 @@ public:
 					if (j<0){j=j+2;}
 					if(j>99){j=j-2;}
 
-					cout << i << ","  << j << endl;
+//					cout << i << ","  << j << endl;
 					neighbours.at(neighbourID) = convertToM(i, j);
 					neighbourID++;
 				}
@@ -83,11 +83,28 @@ public:
 
 		os << "Patch " << m << ": " << endl;
 		os << "Number of plants  extinct =  " << ep  << endl;
-		os << "Number of animals extinct =  " << ep  << endl;
+		os << "Number of animals extinct =  " << ea  << endl;
+		os << "Neighbourhood =  ";
 		for (int n=0; n<8; n++){
 			os<< neighbours.at(n) << ", ";
 		}
 		os << endl;
+	}
+
+	// to check for presence/absence
+	bool isPlantPresent(int i){
+		return (plantPresence.at(i)==1);
+	}
+	bool isAnimalPresent(int j){
+		return (animalPresence.at(j)==1);
+	}
+
+	// to toggle presence/absence
+	void changePlantPresence(int i){
+		plantPresence.at(i) = !plantPresence.at(i);
+	}
+	void changeAnimalPresence(int j){
+		animalPresence.at(j) = !animalPresence.at(j);
 	}
 
 };
