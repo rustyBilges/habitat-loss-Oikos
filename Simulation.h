@@ -52,7 +52,8 @@ public:
 	bool run(MTRand_closed& rng, IStatisticsTracker* tracker){
 
 		for (int t=0; t<iterationCount; t++){
-			extinctions(rng);
+			// simultaneity issue!
+			colonisations(rng);
 			tracker->track(patches);
 		}
 		tracker->save();
@@ -64,6 +65,37 @@ public:
 			patches.at(p).printPatchInfo(cout);
 		}
 
+		return true;
+	}
+
+	bool saveParameters(){
+		ofstream ofile;
+		ofile.open("stable_parameters.test");
+		if (!ofile){return false;}
+
+		for (int i=0; i<numberOfPlants; i++){
+			ofile << E_p.at(i) << ", ";
+		}
+		ofile << endl;
+		for (int i=0; i<numberOfAnimals; i++){
+			ofile << E_a.at(i) << ", ";
+		}
+		ofile << endl << endl;
+
+		for (int i=0; i<numberOfPlants; i++){
+			for (int j=0; j<numberOfAnimals; j++){
+				ofile << C_plant.at(i).at(j) << ", ";
+			}
+			ofile << endl;
+		}
+		ofile << endl << endl;
+		for (int i=0; i<numberOfAnimals; i++){
+			for (int j=0; j<numberOfPlants; j++){
+				ofile << C_animal.at(i).at(j) << ", ";
+			}
+			ofile << endl;
+		}
+		ofile.close();
 		return true;
 	}
 
@@ -140,6 +172,18 @@ private:
 		}
 		return true;
 	}
+	bool colonisations(MTRand_closed& rng){
+
+		for (int p=0; p< patchCount; p++){
+			patches.at(p).calculateColonisationProbabilities(C_plant, C_animal, patches);
+		}
+		extinctions(rng);
+		for (int p=0; p< patchCount; p++){
+			patches.at(p).performColonisations(rng);
+		}
+		return true;
+	}
+
 };
 
 

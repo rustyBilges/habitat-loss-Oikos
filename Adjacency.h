@@ -26,6 +26,11 @@ public:
 	Adjacency(int numberOfPlants, int numberOfAnimals):numberOfPlants(numberOfPlants), numberOfAnimals(numberOfAnimals){
 		connections.resize(numberOfAnimals*numberOfPlants, 0);
 	}
+	// test constructor:
+	bool testNetwork(){
+		connections.at(0) = 1;
+		return true;
+	}
 
 	bool readFromFile(string fname){
 		ifstream ifile;
