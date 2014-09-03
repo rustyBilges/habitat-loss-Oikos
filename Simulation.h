@@ -14,6 +14,7 @@
 #include "Adjacency.h"
 #include "Patch.h"
 #include "IStatisticsTracker.h"
+#include "ExtinctionTracker.h"
 using namespace std;
 
 class Simulation{
@@ -49,6 +50,18 @@ public:
 
 	}
 
+	Simulation(Simulation& sim_to_copy):iterationCount(sim_to_copy.iterationCount), numberOfPlants(sim_to_copy.numberOfPlants), numberOfAnimals(sim_to_copy.numberOfAnimals), landscapeWidth(sim_to_copy.landscapeWidth), landscapeHeight(sim_to_copy.landscapeHeight), masterNetwork(sim_to_copy.masterNetwork), patchCount(sim_to_copy.patchCount){
+
+
+		this->E_a = sim_to_copy.E_a;
+		this->E_p = sim_to_copy.E_p;
+		this->C_plant = sim_to_copy.C_plant;
+		this->C_animal= sim_to_copy.C_animal;
+
+		createPatches();
+
+	}
+
 	bool run(MTRand_closed& rng, IStatisticsTracker* tracker){
 
 		for (int t=0; t<iterationCount; t++){
@@ -57,6 +70,21 @@ public:
 			tracker->track(patches);
 		}
 		tracker->save();
+		return true;
+	}
+
+	bool stabilityCheck(MTRand_closed& rng){
+
+		ExtinctionTracker tracker(C_plant, C_animal);
+
+		for (int t=0; t<iterationCount; t++){
+			// simultaneity issue!
+			colonisations(rng);
+			if(!tracker.checkExtinctions(patches)){
+				cerr << "at least one extinct interaction" << endl;
+				return false;
+			}
+		}
 		return true;
 	}
 
